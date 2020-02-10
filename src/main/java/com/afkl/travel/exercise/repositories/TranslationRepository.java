@@ -1,4 +1,4 @@
-package repositories;
+package com.afkl.travel.exercise.repositories;
 
 import org.springframework.data.repository.CrudRepository;
 
