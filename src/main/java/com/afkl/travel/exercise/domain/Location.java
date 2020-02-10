@@ -1,12 +1,16 @@
 package com.afkl.travel.exercise.domain;
 
+import java.util.Collection;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
 @Entity
@@ -25,46 +29,50 @@ public class Location {
 	private String type;
 	
 	@Column(nullable=false)
-	private double longitude;
+	private Double longitude;
 	
 	@Column(nullable=false)
-	private double latitude;
+	private Double latitude;
 	
-	@OneToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "parent_id")
 	private Location parent;
 	
-	@OneToOne(mappedBy = "location")
-	private Translation translation;
+	@OneToMany(mappedBy = "location")
+	private Collection<Translation> translation;
 	
-	@OneToOne(mappedBy = "parent")
-	@JoinColumn(name = "parent_id")
-	private Location locationTranslation;
+	@OneToMany(mappedBy = "parent")
+	private Collection<Location> locationTranslation;
 	
 	public int getId() {
 		return id;
 	}
 	
 	public String getCode() {
-		return code;
+		return this.code;
 	}
 	
 	public String getType() {
-		return type;
+		return this.type;
 	}
 	
-	public double getLongitude() {
-		return longitude;
+	public Double getLongitude() {
+		return this.longitude;
 	}
 	
-	public double getLatitude() {
-		return latitude;
+	public Double getLatitude() {
+		return this.latitude;
 	}
 	
-//	public Location getParentId() {
-//		return parentId;
-//	}
+	public Location getParent() {
+		return this.parent;
+	}
 
-	public Translation getTranslation() {
-		return translation;
+	public Collection<Translation> getTranslation() {
+		return this.translation;
+	}
+	
+	public Collection<Location> getLocationTranslation() {
+		return this.locationTranslation;
 	}
 }
