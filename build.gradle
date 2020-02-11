@@ -27,6 +27,7 @@ dependencies {
     implementation 'com.h2database:h2'
     implementation 'org.springframework.boot:spring-boot-devtools'
     implementation 'org.apache.commons:commons-lang3'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     
     testCompile 'junit:junit:4.12'
 }
