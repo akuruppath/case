@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 public class Translation {
 
@@ -20,6 +22,7 @@ public class Translation {
 	@Column(name = "id", nullable=false)
 	private int id;
 	
+	@JsonBackReference
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "location")
 	private Location location;

@@ -13,6 +13,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 public class Location {
 
@@ -34,13 +37,16 @@ public class Location {
 	@Column(nullable=false)
 	private Double latitude;
 	
+	@JsonBackReference
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "parent_id")
 	private Location parent;
 	
+	@JsonManagedReference
 	@OneToMany(mappedBy = "location")
 	private Collection<Translation> translation;
 	
+	@JsonManagedReference
 	@OneToMany(mappedBy = "parent")
 	private Collection<Location> locationTranslation;
 	
