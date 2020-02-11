@@ -18,7 +18,7 @@ public class Translation {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_generator")
-	@SequenceGenerator(name="seq_generator", sequenceName = "seq", allocationSize=10)
+	@SequenceGenerator(name="seq_generator", sequenceName = "hibernate_sequence", allocationSize=1)
 	@Column(name = "id", nullable=false)
 	private int id;
 	

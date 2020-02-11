@@ -2,6 +2,7 @@ package com.afkl.travel.exercise.domain;
 
 import java.util.Collection;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -21,7 +22,7 @@ public class Location {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_generator")
-	@SequenceGenerator(name="seq_generator", sequenceName = "seq", allocationSize=10)
+	@SequenceGenerator(name="seq_generator", sequenceName = "hibernate_sequence", allocationSize=1)
 	@Column(name = "id", nullable=false)
 	private int id;
 	
@@ -38,7 +39,7 @@ public class Location {
 	private Double latitude;
 	
 	@JsonBackReference
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "parent_id")
 	private Location parent;
 	

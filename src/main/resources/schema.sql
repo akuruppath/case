@@ -1,3 +1,6 @@
+
+CREATE SEQUENCE IF NOT EXISTS hibernate_sequence;
+
 CREATE TABLE Location (
     id integer NOT NULL,
     code VARCHAR NOT NULL,
