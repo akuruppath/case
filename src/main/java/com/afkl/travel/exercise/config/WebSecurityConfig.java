@@ -1,5 +1,6 @@
 package com.afkl.travel.exercise.config;
 
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -24,11 +25,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
-			http.authorizeRequests().antMatchers("/, /**").permitAll().and()
-					.antMatcher("${service.locations.url}/**").httpBasic().and()
-					.authorizeRequests().anyRequest().hasRole("USER")
-					.anyRequest().authenticated()
-					.and().csrf().disable();
+			http.authorizeRequests().antMatchers("/, /**").permitAll().and().antMatcher("/locations/**").httpBasic()
+					.and().authorizeRequests().anyRequest().hasRole("USER").anyRequest().authenticated().and().csrf()
+					.disable();
 		}
 
 		@Override
@@ -48,5 +47,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		public PasswordEncoder passwordEncoder() {
 			return new BCryptPasswordEncoder();
 		}
+
+	}
+
+	@Order(2)
+	@Configuration
+	public static class ActuatorSecurity extends WebSecurityConfigurerAdapter {
+
+		@Override
+		protected void configure(HttpSecurity http) throws Exception {
+			http.authorizeRequests().antMatchers("/actuator/metrics/**", "/", "/**").permitAll().and().csrf().disable();
+		}
+
 	}
 }
