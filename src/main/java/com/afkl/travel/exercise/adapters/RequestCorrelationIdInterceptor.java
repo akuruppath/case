@@ -13,11 +13,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
-public class RequestInterceptor implements HandlerInterceptor {
+public class RequestCorrelationIdInterceptor implements HandlerInterceptor {
 
 	private static final String CORRELATION_ID_HEADER_NAME = "X-Correlation-Id";
 	private static final String CORRELATION_ID_LOG_VAR_NAME = "correlationId";
-	private static final Logger LOGGER = LoggerFactory.getLogger(RequestInterceptor.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RequestCorrelationIdInterceptor.class);
 
 	@Override
 	public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler)
