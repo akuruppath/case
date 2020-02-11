@@ -1,6 +1,7 @@
 package com.afkl.travel.exercise.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -21,47 +22,64 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Configuration
 	public static class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
 
-		@Autowired
-		private PasswordEncoder passwordEncoder;
-		
-		@Override
-		protected void configure(HttpSecurity http) throws Exception {
-			http.authorizeRequests().antMatchers("/, /**").permitAll().and().antMatcher("/locations/**").httpBasic()
-					.and().authorizeRequests().anyRequest().hasRole("USER").anyRequest().authenticated().and().csrf()
-					.disable();
-		}
+		@Value("${service.locations.url}")
+		private String locationsUrl;
 
-		@Override
-		protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-			String encodedPassword = passwordEncoder.encode("psw");
-			auth.inMemoryAuthentication().withUser("someuser").password(encodedPassword).roles("USER");
-		}
-		
-	}
+		@Value("${service.security.locations.user}")
+		private String locationsUser;
 
-	@Order(2)
-	@Configuration
-	public static class ActuatorSecurity extends WebSecurityConfigurerAdapter {
+		@Value("${service.security.locations.pwd}")
+		private String locationsPwd;
 
 		@Autowired
 		private PasswordEncoder passwordEncoder;
-		
+
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
-			http.authorizeRequests().antMatchers("/, /**").permitAll().and().antMatcher("/actuator/metrics/**")
+			http.authorizeRequests().antMatchers("/, /**").permitAll().and().antMatcher(locationsUrl + "/**")
 					.httpBasic().and().authorizeRequests().anyRequest().hasRole("USER").anyRequest().authenticated()
 					.and().csrf().disable();
 		}
 
 		@Override
 		protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-			String encodedPassword = passwordEncoder.encode("psw");
-			auth.inMemoryAuthentication().withUser("ops").password(encodedPassword).roles("USER");
+			String encodedPassword = passwordEncoder.encode(locationsPwd);
+			auth.inMemoryAuthentication().withUser(locationsUser).password(encodedPassword).roles("USER");
 		}
-		
 
 	}
-	
+
+	@Order(2)
+	@Configuration
+	public static class ActuatorSecurity extends WebSecurityConfigurerAdapter {
+
+		@Value("${service.security.actuator.user}")
+		private String actuatorUser;
+
+		@Value("${service.security.actuator.pwd}")
+		private String actuatorPwd;
+
+		@Value("${service.actuator.url}")
+		private String actuatorUrl;
+
+		@Autowired
+		private PasswordEncoder passwordEncoder;
+
+		@Override
+		protected void configure(HttpSecurity http) throws Exception {
+			http.authorizeRequests().antMatchers("/, /**").permitAll().and().antMatcher(actuatorUrl + "/**").httpBasic()
+					.and().authorizeRequests().anyRequest().hasRole("USER").anyRequest().authenticated().and().csrf()
+					.disable();
+		}
+
+		@Override
+		protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+			String encodedPassword = passwordEncoder.encode(actuatorPwd);
+			auth.inMemoryAuthentication().withUser(actuatorUser).password(encodedPassword).roles("USER");
+		}
+
+	}
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
