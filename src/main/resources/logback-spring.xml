@@ -7,7 +7,7 @@
         class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
             <Pattern>
-               %d{dd-MM-yyyy HH:mm:ss.SSS} %thread [%-5level] %class{0} - %msg%n%throwable
+               %d{dd-MM-yyyy HH:mm:ss.SSS} %thread [%X{correlationId}] [%-5level] %class{0} - %msg%n%throwable
             </Pattern>
         </layout>
     </appender>
