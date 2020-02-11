@@ -19,7 +19,7 @@ import com.afkl.travel.exercise.domain.Location;
 import com.afkl.travel.exercise.repositories.LocationRepository;
 
 @RestController
-@RequestMapping("/locations")
+@RequestMapping("${service.locations.url}")
 public class LocationController {
 
 	private final LocationRepository locationRepository;
@@ -36,7 +36,7 @@ public class LocationController {
 		return new ResponseEntity<>(locationRepository.findAll(), HttpStatus.OK);
 	}
 
-	@GetMapping(path = "{type}/{code}", produces = "application/json")
+	@GetMapping(path = "${service.locations.parametrized.url}", produces = "application/json")
 	public HttpEntity<Iterable<Location>> getLocationByTypeAndCode(@PathVariable("type") String type,
 			@PathVariable("code") String isoCode) {
 
