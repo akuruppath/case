@@ -25,4 +25,8 @@ public class ExceptionResponse {
 	public int getHttpStatus() {
 		return httpStatus;
 	}
+	
+	public String toString() {
+		return String.format("%s %s %s", timeStamp, message, httpStatus);
+	}
 }
