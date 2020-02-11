@@ -1,18 +1,16 @@
 package com.afkl.travel.exercise.config;
 
-import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @Configuration
 @EnableWebSecurity
@@ -23,6 +21,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Configuration
 	public static class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
 
+		@Autowired
+		private PasswordEncoder passwordEncoder;
+		
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			http.authorizeRequests().antMatchers("/, /**").permitAll().and().antMatcher("/locations/**").httpBasic()
@@ -31,33 +32,38 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		}
 
 		@Override
-		@Bean
-		public UserDetailsService userDetailsService() {
-			String username = "someuser";
-			String password = "psw";
-
-			// Set the inMemoryAuthentication object with the given credentials:
-			InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-			String encodedPassword = passwordEncoder().encode(password);
-			manager.createUser(User.withUsername(username).password(encodedPassword).roles("USER").build());
-			return manager;
+		protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+			String encodedPassword = passwordEncoder.encode("psw");
+			auth.inMemoryAuthentication().withUser("someuser").password(encodedPassword).roles("USER");
 		}
-
-		@Bean
-		public PasswordEncoder passwordEncoder() {
-			return new BCryptPasswordEncoder();
-		}
-
+		
 	}
 
 	@Order(2)
 	@Configuration
 	public static class ActuatorSecurity extends WebSecurityConfigurerAdapter {
 
+		@Autowired
+		private PasswordEncoder passwordEncoder;
+		
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
-			http.authorizeRequests().antMatchers("/actuator/metrics/**", "/", "/**").permitAll().and().csrf().disable();
+			http.authorizeRequests().antMatchers("/, /**").permitAll().and().antMatcher("/actuator/metrics/**")
+					.httpBasic().and().authorizeRequests().anyRequest().hasRole("USER").anyRequest().authenticated()
+					.and().csrf().disable();
 		}
 
+		@Override
+		protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+			String encodedPassword = passwordEncoder.encode("psw");
+			auth.inMemoryAuthentication().withUser("ops").password(encodedPassword).roles("USER");
+		}
+		
+
+	}
+	
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
 	}
 }
