@@ -30,6 +30,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		@Value("${service.security.locations.pwd}")
 		private String locationsPwd;
+		
+		@Value("${service.security.locations.role}")
+		private String locationsRole;
 
 		@Autowired
 		private PasswordEncoder passwordEncoder;
@@ -37,14 +40,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			http.authorizeRequests().antMatchers("/, /**").permitAll().and().antMatcher(locationsUrl + "/**")
-					.httpBasic().and().authorizeRequests().anyRequest().hasRole("USER").anyRequest().authenticated()
+					.httpBasic().and().authorizeRequests().anyRequest().hasRole(locationsRole).anyRequest().authenticated()
 					.and().csrf().disable();
 		}
 
 		@Override
 		protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 			String encodedPassword = passwordEncoder.encode(locationsPwd);
-			auth.inMemoryAuthentication().withUser(locationsUser).password(encodedPassword).roles("USER");
+			auth.inMemoryAuthentication().withUser(locationsUser).password(encodedPassword).roles(locationsRole);
 		}
 
 	}
@@ -61,6 +64,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		@Value("${service.actuator.url}")
 		private String actuatorUrl;
+		
+		@Value("${service.security.actuator.role}")
+		private String actuatorRole;
 
 		@Autowired
 		private PasswordEncoder passwordEncoder;
@@ -68,14 +74,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			http.authorizeRequests().antMatchers("/, /**").permitAll().and().antMatcher(actuatorUrl + "/**").httpBasic()
-					.and().authorizeRequests().anyRequest().hasRole("ADMIN").anyRequest().authenticated().and().csrf()
+					.and().authorizeRequests().anyRequest().hasRole(actuatorRole).anyRequest().authenticated().and().csrf()
 					.disable();
 		}
 
 		@Override
 		protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 			String encodedPassword = passwordEncoder.encode(actuatorPwd);
-			auth.inMemoryAuthentication().withUser(actuatorUser).password(encodedPassword).roles("ADMIN");
+			auth.inMemoryAuthentication().withUser(actuatorUser).password(encodedPassword).roles(actuatorRole);
 		}
 
 	}
