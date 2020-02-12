@@ -68,14 +68,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			http.authorizeRequests().antMatchers("/, /**").permitAll().and().antMatcher(actuatorUrl + "/**").httpBasic()
-					.and().authorizeRequests().anyRequest().hasRole("USER").anyRequest().authenticated().and().csrf()
+					.and().authorizeRequests().anyRequest().hasRole("ADMIN").anyRequest().authenticated().and().csrf()
 					.disable();
 		}
 
 		@Override
 		protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 			String encodedPassword = passwordEncoder.encode(actuatorPwd);
-			auth.inMemoryAuthentication().withUser(actuatorUser).password(encodedPassword).roles("USER");
+			auth.inMemoryAuthentication().withUser(actuatorUser).password(encodedPassword).roles("ADMIN");
 		}
 
 	}
