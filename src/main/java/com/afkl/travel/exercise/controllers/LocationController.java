@@ -42,9 +42,11 @@ public class LocationController {
 	public HttpEntity<Iterable<Location>> getLocationByTypeAndCode(@PathVariable("type") String type,
 			@PathVariable("code") String isoCode) {
 
-		Assert.isTrue(StringUtils.isNotBlank(type), "Invalid Location type.");
-		Assert.isTrue(StringUtils.isNotBlank(isoCode) && isoCountries.contains(isoCode), "Invalid Location code.");
-		return new ResponseEntity<>(locationRepository.findByTypeAndCode(type, isoCode),
+		Assert.isTrue(StringUtils.isNotBlank(type), "Location type cannot be blank.");
+		Assert.isTrue(StringUtils.isNotBlank(isoCode), "Location code cannot be blank.");
+		String iso = isoCode.toUpperCase(Locale.US);
+		Assert.isTrue(isoCountries.contains(iso), "Invalid Location code.");
+		return new ResponseEntity<>(locationRepository.findByTypeAndCode(type, iso),
 				HttpStatus.OK);
 	}
 }
