@@ -1,7 +1,8 @@
 package com.afkl.travel.exercise.config;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -18,36 +19,41 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+	private static final String URL = "url";
+	private static final String USER = "user";
+	private static final String PWD = "pwd";
+	private static final String ROLE = "role";
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+	
 	@Order(1)
 	@Configuration
 	public static class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
 
-		@Value("${service.locations.url}")
-		private String locationsUrl;
-
-		@Value("${service.security.locations.user}")
-		private String locationsUser;
-
-		@Value("${service.security.locations.pwd}")
-		private String locationsPwd;
-		
-		@Value("${service.security.locations.role}")
-		private String locationsRole;
+		private final PasswordEncoder passwordEncoder;
+		private final Map<String, String> locationsMap;
 
 		@Autowired
-		private PasswordEncoder passwordEncoder;
+		public ApiSecurityConfig(PasswordEncoder passwordEncoder, ApplicationConfiguration appConfig) {
+			this.passwordEncoder = passwordEncoder;
+			this.locationsMap = appConfig.getLocations();
+		}
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
-			http.authorizeRequests().antMatchers("/, /**").permitAll().and().antMatcher(locationsUrl + "/**")
-					.httpBasic().and().authorizeRequests().anyRequest().hasRole(locationsRole).anyRequest().authenticated()
-					.and().csrf().disable();
+			http.authorizeRequests().antMatchers("/, /**").permitAll().and().antMatcher(locationsMap.get(URL) + "/**")
+					.httpBasic().and().authorizeRequests().anyRequest().hasRole(locationsMap.get(ROLE)).anyRequest()
+					.authenticated().and().csrf().disable();
 		}
 
 		@Override
 		protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-			String encodedPassword = passwordEncoder.encode(locationsPwd);
-			auth.inMemoryAuthentication().withUser(locationsUser).password(encodedPassword).roles(locationsRole);
+			String encodedPassword = passwordEncoder.encode(locationsMap.get(PWD));
+			auth.inMemoryAuthentication().withUser(locationsMap.get(USER)).password(encodedPassword)
+					.roles(locationsMap.get(ROLE));
 		}
 
 	}
@@ -56,38 +62,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Configuration
 	public static class ActuatorSecurity extends WebSecurityConfigurerAdapter {
 
-		@Value("${service.security.actuator.user}")
-		private String actuatorUser;
-
-		@Value("${service.security.actuator.pwd}")
-		private String actuatorPwd;
-
-		@Value("${service.actuator.url}")
-		private String actuatorUrl;
-		
-		@Value("${service.security.actuator.role}")
-		private String actuatorRole;
+		private final PasswordEncoder passwordEncoder;
+		private final Map<String, String> actuatorMap;
 
 		@Autowired
-		private PasswordEncoder passwordEncoder;
+		public ActuatorSecurity(PasswordEncoder passwordEncoder, ApplicationConfiguration appConfig) {
+			this.passwordEncoder = passwordEncoder;
+			this.actuatorMap = appConfig.getActuator();
+		}
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
-			http.authorizeRequests().antMatchers("/, /**").permitAll().and().antMatcher(actuatorUrl + "/**").httpBasic()
-					.and().authorizeRequests().anyRequest().hasRole(actuatorRole).anyRequest().authenticated().and().csrf()
-					.disable();
+			http.authorizeRequests().antMatchers("/, /**").permitAll().and().antMatcher(actuatorMap.get(URL) + "/**")
+					.httpBasic().and().authorizeRequests().anyRequest().hasRole(actuatorMap.get(ROLE)).anyRequest()
+					.authenticated().and().csrf().disable();
 		}
 
 		@Override
 		protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-			String encodedPassword = passwordEncoder.encode(actuatorPwd);
-			auth.inMemoryAuthentication().withUser(actuatorUser).password(encodedPassword).roles(actuatorRole);
+			String encodedPassword = passwordEncoder.encode(actuatorMap.get(PWD));
+			auth.inMemoryAuthentication().withUser(actuatorMap.get(USER)).password(encodedPassword)
+					.roles(actuatorMap.get(ROLE));
 		}
 
 	}
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
 }

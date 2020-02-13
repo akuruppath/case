@@ -36,7 +36,7 @@ public class LocationController {
 		return new ResponseEntity<>(locationRepository.findAll(), HttpStatus.OK);
 	}
 
-	@GetMapping(path = "${service.locations.parametrized.url}", produces = "application/json")
+	@GetMapping(path = "${service.locations.urlparams}", produces = "application/json")
 	public HttpEntity<Iterable<Location>> getLocationByTypeAndCode(@PathVariable("type") String type,
 			@PathVariable("code") String isoCode) {
 
