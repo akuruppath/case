@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class LocationControllerTest {
 
 	@Autowired
@@ -58,12 +58,6 @@ public class LocationControllerTest {
 	public void givenAuthRequestOnLocationParams_shouldFailWith400() throws Exception {
 		mvc.perform(get("/locations/  /NL").contentType(MediaType.APPLICATION_JSON_UTF8))
 				.andExpect(status().isBadRequest());
-	}
-
-	@WithMockUser(value = "someuser")
-	@Test
-	public void givenAuthRequestOnRestTemplate_shouldSuccessWith200() throws Exception {
-		mvc.perform(get("/resttemplate").contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isOk());
 	}
 
 }
