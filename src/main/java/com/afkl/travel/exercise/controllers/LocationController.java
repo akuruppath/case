@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.afkl.travel.exercise.domain.Location;
 import com.afkl.travel.exercise.repositories.LocationRepository;
+import com.afkl.travel.exercise.utils.constants.Constants;
 
 @RestController
 @RequestMapping("${service.locations.url}")
 public class LocationController {
 
-	private static final String MIME_TYPE = "application/json;charset=UTF-8";
 	
 	private final LocationRepository locationRepository;
 	private final List<String> isoCountries;
@@ -33,12 +33,12 @@ public class LocationController {
 		isoCountries = Arrays.asList(Locale.getISOCountries());
 	}
 
-	@GetMapping(produces = MIME_TYPE)
+	@GetMapping(produces = Constants.MIME_TYPE)
 	public HttpEntity<Iterable<Location>> getAllLocations() {
 		return new ResponseEntity<>(locationRepository.findAll(), HttpStatus.OK);
 	}
 
-	@GetMapping(path = "${service.locations.urlparams}", produces = MIME_TYPE)
+	@GetMapping(path = "${service.locations.urlparams}", produces = Constants.MIME_TYPE)
 	public HttpEntity<Iterable<Location>> getLocationByTypeAndCode(@PathVariable("type") String type,
 			@PathVariable("code") String isoCode) {
 
