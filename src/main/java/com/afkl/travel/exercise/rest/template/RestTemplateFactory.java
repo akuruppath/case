@@ -2,6 +2,7 @@ package com.afkl.travel.exercise.rest.template;
 
 import java.util.Map;
 
+import org.apache.commons.codec.Charsets;
 import org.apache.http.HttpHost;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -43,6 +44,6 @@ public class RestTemplateFactory implements FactoryBean<RestTemplate>, Initializ
 				locationsMap.get(Constants.PROTOCOL));
 		restTemplate = new RestTemplate(new BasicAuthorizationFactory(host));
 		restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor(locationsMap.get(Constants.USER_NAME),
-				locationsMap.get(Constants.PASSWORD)));
+				locationsMap.get(Constants.PASSWORD), Charsets.UTF_8));
 	}
 }
