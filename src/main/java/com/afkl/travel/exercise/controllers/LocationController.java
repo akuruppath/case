@@ -22,6 +22,8 @@ import com.afkl.travel.exercise.repositories.LocationRepository;
 @RequestMapping("${service.locations.url}")
 public class LocationController {
 
+	private static final String MIME_TYPE = "application/json;charset=UTF-8";
+	
 	private final LocationRepository locationRepository;
 	private final List<String> isoCountries;
 
@@ -31,12 +33,12 @@ public class LocationController {
 		isoCountries = Arrays.asList(Locale.getISOCountries());
 	}
 
-	@GetMapping(produces = "application/json")
+	@GetMapping(produces = MIME_TYPE)
 	public HttpEntity<Iterable<Location>> getAllLocations() {
 		return new ResponseEntity<>(locationRepository.findAll(), HttpStatus.OK);
 	}
 
-	@GetMapping(path = "${service.locations.urlparams}", produces = "application/json")
+	@GetMapping(path = "${service.locations.urlparams}", produces = MIME_TYPE)
 	public HttpEntity<Iterable<Location>> getLocationByTypeAndCode(@PathVariable("type") String type,
 			@PathVariable("code") String isoCode) {
 
