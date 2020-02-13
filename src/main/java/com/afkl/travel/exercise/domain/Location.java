@@ -45,11 +45,11 @@ public class Location {
 	
 	@JsonManagedReference
 	@OneToMany(mappedBy = "location")
-	private Collection<Translation> translation;
+	private Collection<Translation> translations;
 	
 	@JsonManagedReference
 	@OneToMany(mappedBy = "parent")
-	private Collection<Location> locationTranslation;
+	private Collection<Location> childLocations;
 	
 	public int getId() {
 		return id;
@@ -75,11 +75,11 @@ public class Location {
 		return this.parent;
 	}
 
-	public Collection<Translation> getTranslation() {
-		return this.translation;
+	public Collection<Translation> getTranslations() {
+		return this.translations;
 	}
 	
-	public Collection<Location> getLocationTranslation() {
-		return this.locationTranslation;
+	public Collection<Location> getChildLocations() {
+		return this.childLocations;
 	}
 }
